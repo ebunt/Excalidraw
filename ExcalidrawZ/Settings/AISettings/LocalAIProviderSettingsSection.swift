@@ -9,18 +9,29 @@ struct LocalAIProviderSettingsSection: View {
         _viewModel = StateObject(wrappedValue: AIProviderSelectionViewModel(container: aiContainer))
     }
 
+    private let availableProviders: [(id: String, name: String)] = [
+        ("ollama", "Ollama"),
+        ("local-http", "Local HTTP"),
+    ]
+
     var body: some View {
         Section {
             Toggle(isOn: $aiContainer.settingsStore.settings.onDeviceOnly) {
                 Text("On-device only")
             }
 
-            Picker("AI provider", selection: $aiContainer.settingsStore.settings.selectedProviderID.toNonOptional(defaultValue: "local-http")) {
-                Text("Local HTTP")
-                    .tag("local-http")
+            Picker("AI provider", selection: $aiContainer.settingsStore.settings.selectedProviderID.toNonOptional(defaultValue: "ollama")) {
+                ForEach(availableProviders, id: \.id) { provider in
+                    Text(provider.name).tag(provider.id)
+                }
+            }
+            .onChange(of: aiContainer.settingsStore.settings.selectedProviderID) { _, _ in
+                aiContainer.settingsStore.settings.selectedModelID = nil
+                aiContainer.refreshProviders()
+                Task { await viewModel.refresh() }
             }
 
-            TextField("Local server URL", text: $aiContainer.localAISettingsStore.baseURLString)
+            TextField("Server URL", text: $aiContainer.localAISettingsStore.baseURLString)
 #if os(macOS)
                 .textFieldStyle(.roundedBorder)
 #endif
@@ -38,7 +49,7 @@ struct LocalAIProviderSettingsSection: View {
                 Slider(value: $aiContainer.settingsStore.settings.temperature, in: 0...1)
             }
 
-            Picker("Local model", selection: $aiContainer.settingsStore.settings.selectedModelID.toNonOptional(defaultValue: "")) {
+            Picker("Model", selection: $aiContainer.settingsStore.settings.selectedModelID.toNonOptional(defaultValue: "")) {
                 if viewModel.models.isEmpty {
                     Text("No models available")
                         .tag("")
@@ -51,7 +62,7 @@ struct LocalAIProviderSettingsSection: View {
             }
 
             HStack(spacing: 12) {
-                Button("Refresh local models") {
+                Button("Refresh models") {
                     aiContainer.refreshProviders()
                     Task { await viewModel.refresh() }
                 }
@@ -70,7 +81,7 @@ struct LocalAIProviderSettingsSection: View {
         } header: {
             Text("Local AI provider")
         } footer: {
-            Text("Use a local server that exposes /models and /generate endpoints, such as a thin adapter around Ollama or LM Studio.")
+            Text("Connect to a local Ollama server (default) or a custom HTTP adapter that exposes /models and /generate endpoints.")
         }
         .task {
             await viewModel.refresh()

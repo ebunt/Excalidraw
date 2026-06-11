@@ -25,9 +25,7 @@ extension AISettingsView {
 
                 localProviderSection
 
-                if let aiContainer {
-                    LocalAITestPanel(aiContainer: aiContainer)
-                }
+                LocalAITestPanel(aiContainer: aiContainer)
 
                 Section {
                     aiAccountRows

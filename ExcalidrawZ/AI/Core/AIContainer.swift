@@ -32,19 +32,18 @@ final class AIContainer: ObservableObject {
     func refreshProviders() {
         Task {
             await registerProviders()
-            await ensureDefaultSelection()
         }
     }
 
     private func registerProviders() async {
         guard let baseURL = localAISettingsStore.normalizedBaseURL else { return }
+        await registry.register(OllamaProvider(baseURL: baseURL))
         await registry.register(LocalHTTPProvider(baseURL: baseURL))
     }
 
     private func ensureDefaultSelection() async {
-        let settings = settingsStore.settings
-        if settings.selectedProviderID == nil {
-            settingsStore.settings.selectedProviderID = "local-http"
+        if settingsStore.settings.selectedProviderID == nil {
+            settingsStore.settings.selectedProviderID = "ollama"
         }
     }
 }

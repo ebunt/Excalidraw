@@ -6,8 +6,14 @@ final class LocalAISettingsStore: ObservableObject {
         didSet { save() }
     }
 
-    init(baseURLString: String = Self.defaultBaseURLString) {
-        if let stored = UserDefaults.standard.string(forKey: Self.baseURLDefaultsKey),
+    private let userDefaults: UserDefaults
+
+    init(
+        baseURLString: String = Self.defaultBaseURLString,
+        userDefaults: UserDefaults = .standard
+    ) {
+        self.userDefaults = userDefaults
+        if let stored = userDefaults.string(forKey: Self.baseURLDefaultsKey),
            !stored.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             self.baseURLString = stored
         } else {
@@ -22,7 +28,7 @@ final class LocalAISettingsStore: ObservableObject {
     }
 
     private func save() {
-        UserDefaults.standard.set(baseURLString, forKey: Self.baseURLDefaultsKey)
+        userDefaults.set(baseURLString, forKey: Self.baseURLDefaultsKey)
     }
 
     private static let baseURLDefaultsKey = "ai.localHTTP.baseURL"
