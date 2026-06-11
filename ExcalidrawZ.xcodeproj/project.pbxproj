@@ -378,6 +378,7 @@
 		39A28CF92D92D8EA00B079B1 /* ContentView+ */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "ContentView+"; sourceTree = "<group>"; };
 		39B69BC52D8BD74C003369E8 /* Subscription */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (39B2EBF52D9AFD9900B6CB47 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 39B2EC032D9AFFDB00B6CB47 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Subscription; sourceTree = "<group>"; };
 		39E70D9C2F125D38003BDFDF /* SidebarTrailing */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (39CC1FC22F22789A00EAD6BB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 39CC1FC32F22789A00EAD6BB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SidebarTrailing; sourceTree = "<group>"; };
+		AA1234562D096D5700870AC9 /* AI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AI; sourceTree = "<group>"; };
 		39ED18482D3FCECB00E437A0 /* Videos */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (399993652E66DA9E000FF1EC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 399993662E66DAA0000FF1EC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Videos; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -523,6 +524,7 @@
 				396603ED2D096D6500870AC9 /* Share */,
 				39B69BC52D8BD74C003369E8 /* Subscription */,
 				396603D92D096D5700870AC9 /* Settings */,
+				AA1234562D096D5700870AC9 /* AI */,
 				394EF5032DAD358A005C18E7 /* Debug */,
 				3963A0342C6BD6B200472AE7 /* Sparkle */,
 				396603C42D096D4900870AC9 /* Store */,

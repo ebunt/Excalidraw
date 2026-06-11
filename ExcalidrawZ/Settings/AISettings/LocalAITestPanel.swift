@@ -6,7 +6,12 @@ struct LocalAITestPanel: View {
 
     init(aiContainer: AIContainer) {
         self.aiContainer = aiContainer
-        _viewModel = StateObject(wrappedValue: LocalAITestViewModel(aiService: aiContainer.aiService))
+        _viewModel = StateObject(
+            wrappedValue: LocalAITestViewModel(
+                aiService: aiContainer.aiService,
+                contextBuilder: CanvasAIContextBuilder()
+            )
+        )
     }
 
     var body: some View {
@@ -40,7 +45,7 @@ struct LocalAITestPanel: View {
         } header: {
             Text("Local AI test")
         } footer: {
-            Text("This sends a structured test request through AIService so you can verify the provider setup without wiring it into the canvas yet.")
+            Text("Sends a request through AIService using the live canvas state (selected elements, scene summary). Select elements on the canvas before running to include them in context.")
         }
     }
 }

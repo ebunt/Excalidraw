@@ -1,11 +1,5 @@
 import Foundation
 
-struct LocalAITestResponse: Decodable, Hashable {
-    let echoedPrompt: String
-    let documentTitle: String?
-    let selectedTextCount: Int
-}
-
 @MainActor
 final class LocalAITestViewModel: ObservableObject {
     @Published var prompt: String = "Summarize the current selection."
@@ -14,9 +8,11 @@ final class LocalAITestViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let aiService: AIService
+    private let contextBuilder: CanvasAIContextBuilder?
 
-    init(aiService: AIService) {
+    init(aiService: AIService, contextBuilder: CanvasAIContextBuilder? = nil) {
         self.aiService = aiService
+        self.contextBuilder = contextBuilder
     }
 
     func run() async {
@@ -26,20 +22,20 @@ final class LocalAITestViewModel: ObservableObject {
         defer { isRunning = false }
 
         do {
-            let response = try await aiService.generate(
-                systemPrompt: "Return a JSON object that echoes the prompt and selected text count.",
-                userPrompt: prompt,
-                context: AIContext(
-                    documentTitle: "Test Document",
-                    selectedElementIDs: ["shape-1", "shape-2"],
-                    selectedText: ["API Gateway", "Auth Service"],
-                    sceneSummary: "A simple architecture diagram."
-                ),
-                format: .json(schemaName: "localAITestResponse")
-            )
+            let context: AIContext
+            if let contextBuilder {
+                context = await contextBuilder.build()
+            } else {
+                context = .empty
+            }
 
-            let decoded = try JSONDecoder().decode(LocalAITestResponse.self, from: Data(response.text.utf8))
-            resultText = "Prompt: \(decoded.echoedPrompt)\nDocument: \(decoded.documentTitle ?? "nil")\nSelected text count: \(decoded.selectedTextCount)"
+            let response = try await aiService.generate(
+                systemPrompt: "Summarize the given context concisely. If asked for JSON, return valid JSON only.",
+                userPrompt: prompt,
+                context: context,
+                format: .text
+            )
+            resultText = response.text
         } catch {
             errorMessage = error.localizedDescription
         }
