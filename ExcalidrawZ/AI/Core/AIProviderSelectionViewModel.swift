@@ -19,10 +19,11 @@ final class AIProviderSelectionViewModel: ObservableObject {
 
         container.refreshProviders()
 
-        guard let provider = await container.registry.provider(id: "local-http") else {
+        let providerID = container.settingsStore.settings.selectedProviderID ?? "ollama"
+        guard let provider = await container.registry.provider(id: providerID) else {
             models = []
             isAvailable = false
-            statusMessage = "Local HTTP provider is not configured."
+            statusMessage = "Selected AI provider is not configured."
             return
         }
 
@@ -35,15 +36,17 @@ final class AIProviderSelectionViewModel: ObservableObject {
                 models = loadedModels
                 statusMessage = loadedModels.isEmpty
                     ? "Connected, but the provider reported no local models."
-                    : "Connected to local AI provider."
+                    : "Connected to \(provider.displayName)."
 
-                if container.settingsStore.settings.selectedModelID == nil,
-                   let firstModel = loadedModels.first {
-                    container.settingsStore.settings.selectedModelID = firstModel.id
+                if let selectedModelID = container.settingsStore.settings.selectedModelID,
+                   loadedModels.contains(where: { $0.id == selectedModelID }) {
+                    return
                 }
+
+                container.settingsStore.settings.selectedModelID = loadedModels.first?.id
             } else {
                 models = []
-                statusMessage = "Unable to reach the local AI server."
+                statusMessage = "Unable to reach \(provider.displayName)."
             }
         } catch {
             models = []

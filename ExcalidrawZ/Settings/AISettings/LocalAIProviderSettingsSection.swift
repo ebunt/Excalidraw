@@ -15,12 +15,17 @@ struct LocalAIProviderSettingsSection: View {
                 Text("On-device only")
             }
 
-            Picker("AI provider", selection: $aiContainer.settingsStore.settings.selectedProviderID.toNonOptional(defaultValue: "local-http")) {
+            Picker("AI provider", selection: $aiContainer.settingsStore.settings.selectedProviderID.toNonOptional(defaultValue: "ollama")) {
+                Text("Ollama")
+                    .tag("ollama")
                 Text("Local HTTP")
                     .tag("local-http")
             }
+            .onChange(of: aiContainer.settingsStore.settings.selectedProviderID) { _, _ in
+                Task { await viewModel.refresh() }
+            }
 
-            TextField("Local server URL", text: $aiContainer.localAISettingsStore.baseURLString)
+            TextField("Server URL", text: $aiContainer.localAISettingsStore.baseURLString)
 #if os(macOS)
                 .textFieldStyle(.roundedBorder)
 #endif
@@ -38,7 +43,7 @@ struct LocalAIProviderSettingsSection: View {
                 Slider(value: $aiContainer.settingsStore.settings.temperature, in: 0...1)
             }
 
-            Picker("Local model", selection: $aiContainer.settingsStore.settings.selectedModelID.toNonOptional(defaultValue: "")) {
+            Picker("Model", selection: $aiContainer.settingsStore.settings.selectedModelID.toNonOptional(defaultValue: "")) {
                 if viewModel.models.isEmpty {
                     Text("No models available")
                         .tag("")
@@ -51,7 +56,7 @@ struct LocalAIProviderSettingsSection: View {
             }
 
             HStack(spacing: 12) {
-                Button("Refresh local models") {
+                Button("Refresh models") {
                     aiContainer.refreshProviders()
                     Task { await viewModel.refresh() }
                 }
@@ -70,7 +75,7 @@ struct LocalAIProviderSettingsSection: View {
         } header: {
             Text("Local AI provider")
         } footer: {
-            Text("Use a local server that exposes /models and /generate endpoints, such as a thin adapter around Ollama or LM Studio.")
+            Text("Use Ollama directly or provide a custom local server exposing /models and /generate endpoints.")
         }
         .task {
             await viewModel.refresh()

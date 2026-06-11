@@ -36,15 +36,20 @@ final class AIContainer: ObservableObject {
         }
     }
 
+    func supportedProviderIDs() -> [String] {
+        ["local-http", "ollama"]
+    }
+
     private func registerProviders() async {
         guard let baseURL = localAISettingsStore.normalizedBaseURL else { return }
         await registry.register(LocalHTTPProvider(baseURL: baseURL))
+        await registry.register(OllamaProvider(baseURL: baseURL))
     }
 
     private func ensureDefaultSelection() async {
         let settings = settingsStore.settings
         if settings.selectedProviderID == nil {
-            settingsStore.settings.selectedProviderID = "local-http"
+            settingsStore.settings.selectedProviderID = "ollama"
         }
     }
 }
