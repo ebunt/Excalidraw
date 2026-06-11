@@ -1,10 +1,3 @@
-//
-//  AISettingsView.swift
-//  ExcalidrawZ
-//
-//  Created by Dove Zachary on 3/20/25.
-//
-
 import SwiftUI
 import ChocofordUI
 import LLMKit
@@ -13,6 +6,7 @@ import LLMCore
 struct AISettingsView: View {
     @EnvironmentObject var llmState: LLMStateObject
     @EnvironmentObject var store: Store
+    @EnvironmentObject var aiContainer: AIContainer
     @ObservedObject var prefs = AIChatPreferences.shared
     @ObservedObject var router = SettingsRouter.shared
 
