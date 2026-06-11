@@ -8,9 +8,11 @@ final class LocalAITestViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let aiService: AIService
+    private let contextBuilder: CanvasAIContextBuilder?
 
-    init(aiService: AIService) {
+    init(aiService: AIService, contextBuilder: CanvasAIContextBuilder? = nil) {
         self.aiService = aiService
+        self.contextBuilder = contextBuilder
     }
 
     func run() async {
@@ -20,15 +22,17 @@ final class LocalAITestViewModel: ObservableObject {
         defer { isRunning = false }
 
         do {
+            let context: AIContext
+            if let contextBuilder {
+                context = await contextBuilder.build()
+            } else {
+                context = .empty
+            }
+
             let response = try await aiService.generate(
                 systemPrompt: "Summarize the given context concisely. If asked for JSON, return valid JSON only.",
                 userPrompt: prompt,
-                context: AIContext(
-                    documentTitle: "Test Document",
-                    selectedElementIDs: ["shape-1", "shape-2"],
-                    selectedText: ["API Gateway", "Auth Service"],
-                    sceneSummary: "A simple architecture diagram."
-                ),
+                context: context,
                 format: .text
             )
             resultText = response.text
